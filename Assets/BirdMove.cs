@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class BirdMove : MonoBehaviour
 {
-    private int pitch = 0; // 1 is forward, -1 is backwards
-    private float rotateSpeed = 100.0f;
+    private float yaw = 0.0f;
+    private float pitch = 0.0f;
+    private float rotateSpeed = 150.0f;
 
-    private bool spacebarDown = false;
-    
-    private Vector3 velocity = new Vector3(0, 0, 0);
+    private float forwardSpeed = 10.0f;
+
+    private bool flying = true;
     
     // Start is called before the first frame update
     void Start()
@@ -21,39 +22,48 @@ public class BirdMove : MonoBehaviour
     void Update()
     {
         // get player input
-        if (Input.GetKey(KeyCode.Space))
-        {
-            if (!spacebarDown)
-            {
-                velocity += new Vector3(0, 0.5f, 0);
-            }
+        pitch += -Input.GetAxis("Vertical") * Time.deltaTime * rotateSpeed;
+        yaw += Input.GetAxis("Horizontal") * Time.deltaTime * rotateSpeed;
 
-            spacebarDown = true;
-        }
-        else spacebarDown = false;
-        if (Input.GetKey(KeyCode.W))
+        pitch = Mathf.Clamp(pitch, -30, 90);
+
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+        
+        if (flying)
         {
-            pitch = 1;
-            Debug.Log("W");
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            pitch = -1;
-            Debug.Log("S");
+            transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
         }
         else
         {
-            pitch = 0;
-            Debug.Log("none");
+            if (Input.GetKey(KeyCode.Space))
+            {
+                // transform.Translate()
+                flying = true;
+            }
         }
-        
-        // adjust rotation/position
-        if (pitch != 0)
-        {
-            transform.Rotate(Time.deltaTime * pitch * rotateSpeed, 0, 0);
-        }
+    }
 
-        velocity -= new Vector3(0, Time.deltaTime * 1f, 0);
-        transform.position += velocity;
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Power Line")
+        {
+            // sit on power line
+            flying = false;
+            float height = other.gameObject.transform.position.y + 1;
+
+            if (other.gameObject.GetComponent<PowerLine>().IsXCentered())
+            {
+                transform.position = new Vector3(other.gameObject.transform.position.x, height, transform.position.z);
+            }
+            else transform.position = new Vector3(transform.position.x, height, other.gameObject.transform.position.z);
+            
+            // Vector3 fromCenter = transform.position - other.gameObject.transform.position;
+
+            // if (fromCenter.x < fromCenter.z)
+            // {
+            //     transform.position = new Vector3(transform.position.x, height, fromCenter.z);
+            // }
+            // else transform.position = new Vector3(fromCenter.x, height, transform.position.z);
+        }
     }
 }

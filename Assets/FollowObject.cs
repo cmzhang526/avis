@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class FollowObject : MonoBehaviour
 {
-    public GameObject targetObject;
+    public GameObject player;
+    private Vector3 offset;
 
-    private Vector3 displacement;
+    private float distance;
+    private Vector3 playerPrevPos, playerMoveDir;
 
     // Start is called before the first frame update
     void Start()
     {
-        displacement = targetObject.transform.position - transform.position;
+        offset = player.transform.position - transform.position;
+
+        distance = offset.magnitude;
+        playerPrevPos = player.transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    // LateUpdate is called once per frame, after Update
+    void LateUpdate()
     {
-        transform.position = targetObject.transform.position - displacement;
-        // transform.LookAt(targetObject.transform);
+        playerMoveDir = player.transform.position - playerPrevPos;
+        playerMoveDir.Normalize();
+        transform.position = player.transform.position - distance * playerMoveDir;
+
+        transform.LookAt(player.transform.position);
+
+        playerPrevPos = player.transform.position;
     }
 }
