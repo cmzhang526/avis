@@ -17,13 +17,19 @@ public class BirdMove : MonoBehaviour
     private float power;
     private float rechargeFactor = 3.0f;
 
+    private bool spacebarDown = false;
+
     private Slider powerSlider;
+
+    private Rigidbody rb;
     
     // Start is called before the first frame update
     void Start()
     {
         powerSlider = GameObject.Find("Power Slider").GetComponent<Slider>();
         power = maxPower;
+
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -41,13 +47,29 @@ public class BirdMove : MonoBehaviour
         {
             if (power > 0)
             {
-                transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
+                // transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
                 ChangePower(-Time.deltaTime);
             }
             else
             {
                 transform.Translate(new Vector3(0, -2.0f * Time.deltaTime, 0));
             }
+            
+            // flap on spacebar
+            if (Input.GetKey(KeyCode.Space))
+            {
+                Debug.Log("spacebar down");
+                if (!spacebarDown)
+                {
+                    Debug.Log("flap");
+                    float verticalForce = 1000.0f;
+                    float directionalForce = 0.0f;
+                    rb.AddForce(new Vector3(0, verticalForce, 0) + directionalForce * Vector3.forward);
+                }
+
+                spacebarDown = true;
+            }
+            else spacebarDown = false;
         }
         else
         {
