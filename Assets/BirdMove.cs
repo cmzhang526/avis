@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BirdMove : MonoBehaviour
 {
@@ -11,11 +12,18 @@ public class BirdMove : MonoBehaviour
     private float forwardSpeed = 10.0f;
 
     private bool flying = true;
+
+    private float maxPower = 10.0f;
+    private float power;
+    private float rechargeFactor = 3.0f;
+
+    private Slider powerSlider;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        powerSlider = GameObject.Find("Power Slider").GetComponent<Slider>();
+        power = maxPower;
     }
 
     // Update is called once per frame
@@ -31,16 +39,32 @@ public class BirdMove : MonoBehaviour
         
         if (flying)
         {
-            transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
+            if (power > 0)
+            {
+                transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
+                ChangePower(-Time.deltaTime);
+            }
+            else
+            {
+                transform.Translate(new Vector3(0, -2.0f * Time.deltaTime, 0));
+            }
         }
         else
         {
+            ChangePower(rechargeFactor * Time.deltaTime);
             if (Input.GetKey(KeyCode.Space))
             {
                 // transform.Translate()
                 flying = true;
             }
         }
+    }
+
+    void ChangePower(float change)
+    {
+        power += change;
+        if (power > maxPower) power = maxPower;
+        powerSlider.value = power/maxPower;
     }
 
     void OnTriggerEnter(Collider other)
