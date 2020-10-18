@@ -9,7 +9,11 @@ public class BirdMove : MonoBehaviour
     private float pitch = 0.0f;
     private float rotateSpeed = 150.0f;
 
-    private float forwardSpeed = 10.0f;
+	private float minForwardSpeed = 4.0f;
+	private float maxForwardSpeed = 30.0f;
+    private float forwardSpeed = 0;
+
+	private float momentum = 0;
 
     private bool flying = true;
 
@@ -42,7 +46,18 @@ public class BirdMove : MonoBehaviour
         pitch = Mathf.Clamp(pitch, -30, 90);
 
         transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+
+		// calculate forward speed based on pitch
+		float factor = (pitch <= 0) ? 0 : pitch/90;
+		forwardSpeed = Mathf.Lerp(minForwardSpeed, maxForwardSpeed, factor) + momentum;
+		Debug.Log("forward speed = " + forwardSpeed + ", pitch = " + pitch);
+		transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
+		// add to momentum
+		//float momentumFactor = 
+		//if(pitch > 10) momentum += forwardSpeed;
+		//else if(pitch < 0) momentum -= forwardSpeed;
         
+
         if (flying)
         {
             if (power > 0)
@@ -52,10 +67,11 @@ public class BirdMove : MonoBehaviour
             }
             else
             {
-                transform.Translate(new Vector3(0, -2.0f * Time.deltaTime, 0));
+                // transform.Translate(new Vector3(0, -2.0f * Time.deltaTime, 0));
             }
             
-            // flap on spacebar
+            // flap on spacebar 
+/*
             if (Input.GetKey(KeyCode.Space))
             {
                 Debug.Log("spacebar down");
@@ -69,7 +85,7 @@ public class BirdMove : MonoBehaviour
 
                 spacebarDown = true;
             }
-            else spacebarDown = false;
+            else spacebarDown = false; */
         }
         else
         {
