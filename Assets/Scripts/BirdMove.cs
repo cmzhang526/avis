@@ -39,7 +39,8 @@ public class BirdMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // get player input
+        return;
+        /*// get player input
         pitch += -Input.GetAxis("Vertical") * Time.deltaTime * rotateSpeed;
         yaw += Input.GetAxis("Horizontal") * Time.deltaTime * rotateSpeed;
 
@@ -52,11 +53,11 @@ public class BirdMove : MonoBehaviour
 		forwardSpeed = Mathf.Lerp(minForwardSpeed, maxForwardSpeed, factor) + momentum;
 		Debug.Log("forward speed = " + forwardSpeed + ", pitch = " + pitch);
 		transform.Translate(forwardSpeed * Time.deltaTime * Vector3.forward);
-		// add to momentum
-		//float momentumFactor = 
-		//if(pitch > 10) momentum += forwardSpeed;
-		//else if(pitch < 0) momentum -= forwardSpeed;
-        
+        // add to momentum
+        //float momentumFactor = 
+        //if(pitch > 10) momentum += forwardSpeed;
+        //else if(pitch < 0) momentum -= forwardSpeed;
+        transform.position = new Vector3(transform.position.x, 5, transform.position.z);
 
         if (flying)
         {
@@ -85,7 +86,7 @@ public class BirdMove : MonoBehaviour
 
                 spacebarDown = true;
             }
-            else spacebarDown = false; */
+            else spacebarDown = false; 
         }
         else
         {
@@ -95,7 +96,7 @@ public class BirdMove : MonoBehaviour
                 // transform.Translate()
                 flying = true;
             }
-        }
+        }*/
     }
 
     void ChangePower(float change)
